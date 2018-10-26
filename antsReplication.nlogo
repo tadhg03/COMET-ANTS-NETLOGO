@@ -1,20 +1,63 @@
+;attributes of turtles
 turtles-own [food-eaten]
 
+;attributes of food patches (current code: 1 food patch)
+patches-own [
+  chemical ;; amount of chemical on patch
+  food ;; amount of food on patch
+  nest? ;; boolean value: true if nest (where turtles initially spawn)
+  nest-scent
+  food-source-number ;; ID value: food patch ID
+]
+
+;setting up turtles and food patches
 to setup
   clear-all
-  reset-ticks
   create-turtles population
   ask turtles
   [
     set shape "turtle"
-    set size 3
+    set size 2
     set color green
-    set food-eaten 0
-    ;test
+    set food-eaten 0 ;; test later if we still need this
   ]
   grow-food
+  reset-ticks
 end
 
+to grow-food
+  ask patches
+  [
+    setup-nest
+    setup-food
+    recolor-patch
+  ]
+end
+
+to setup-nest ;; will figure out what this does
+  set nest? (distancexy 0 0) < 5
+  set nest-scent 200 - distancexy 0 0
+end
+
+to setup-food
+  if (distancexy (0.6 * max-pxcor) 0) < 5 ;; should probably change this but idk
+  [ set food-source-number 1 ] ;; only setting up 1 food source
+  if food-source-number = 1
+  [ set food 1 ] ;;; setting amount of food on patch to 1
+end
+
+;; recolor food patch
+to recolor-patch
+  ifelse nest?
+  [ set pcolor magenta ]
+  [ ifelse food > 0
+    [ set pcolor blue ]
+    [ set pcolor scale-color green chemical 0.1 5 ] ] ;; will figure out what this does
+end
+
+
+
+;; everything below this line hasn't been changed from the thing we did in class
 to go
   if not any? patches with [pcolor = blue][stop]
   ask turtles
@@ -34,10 +77,6 @@ end
 
 to-report coin-flip?
   report random 2 = 0
-end
-
-to grow-food
-  ask patches [set pcolor blue]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -143,7 +182,7 @@ max-turn-angle
 max-turn-angle
 0
 180
-5.0
+2.0
 1
 1
 NIL
@@ -158,7 +197,7 @@ max-step-size
 max-step-size
 1
 100
-3.0
+6.0
 1
 1
 NIL
