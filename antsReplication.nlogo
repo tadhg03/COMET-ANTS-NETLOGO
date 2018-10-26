@@ -56,37 +56,103 @@ to recolor-patch
 end
 
 
-
-;; everything below this line hasn't been changed from the thing we did in class
 to go
   if not any? patches with [pcolor = blue][stop]
   ask turtles
   [
-    ifelse coin-flip? [right random max-turn-angle] [left random max-turn-angle]
-    forward random max-step-size
 
-    if pcolor = blue
-    [
-      set pcolor black
-      set food-eaten (food-eaten + 1)
-      set label food-eaten
-    ]
+    ifelse color = green
+    [find-food]
+    [go-home]
+
+    ifelse coin-flip? [right random max-turn-angle] [left random max-turn-angle]
+    if not can-move? 1 [right 180]
+    forward random max-step-size
   ]
+
+  diffuse chemical (diffusion-rate / 100)
+
+  ask patches
+  [ set chemical chemical * (100 - evaporation-rate) / 100
+    recolor-patch ]
+
+    ;;not sure if we need this will keep here tho incase
+    ;;if pcolor = blue
+    ;;[
+      ;;set pcolor black
+      ;;set food-eaten (food-eaten + 1)
+      ;;set label food-eaten
+    ;;]
+
   tick
 end
 
 to-report coin-flip?
   report random 2 = 0
 end
+
+to find-food
+  if food > 0
+  [ set color blue + 1
+    set food food - 1
+    right 180
+    stop ]
+  if(chemical >= 0.05) and (chemical < 2)
+  [ follow-food-scent]
+end
+
+to follow-food-scent
+  let scent-ahead chemical-scent-at-angle   0
+  let scent-right chemical-scent-at-angle  45
+  let scent-left  chemical-scent-at-angle -45
+  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
+  [ ifelse scent-right > scent-left
+    [ right 45 ]
+    [ left 45 ] ]
+end
+
+to-report chemical-scent-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [report 0]
+  report [chemical] of p
+end
+
+to go-home
+  ifelse nest?
+  [
+    set color green
+    right 180
+  ]
+  [
+    set chemical chemical + 60
+    follow-nest-scent
+  ]
+end
+
+to follow-nest-scent
+  let scent-ahead nest-scent-at-angle   0
+  let scent-right nest-scent-at-angle  45
+  let scent-left  nest-scent-at-angle -45
+  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
+  [ ifelse scent-right > scent-left
+    [ right 45 ]
+    [ left 45 ] ]
+end
+
+to-report nest-scent-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [nest-scent] of p
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-647
-448
+715
+516
 -1
 -1
-13.0
+7.0
 1
 10
 1
@@ -96,10 +162,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--16
-16
--16
-16
+-35
+35
+-35
+35
 0
 0
 1
@@ -148,18 +214,18 @@ SLIDER
 population
 population
 1
-100
-51.0
+200
+125.0
 1
 1
 NIL
 HORIZONTAL
 
 PLOT
-4
-234
-204
-384
+3
+436
+203
+586
 Total Food Eaten
 Time
 Total Food Eaten
@@ -182,7 +248,7 @@ max-turn-angle
 max-turn-angle
 0
 180
-2.0
+41.0
 1
 1
 NIL
@@ -197,7 +263,37 @@ max-step-size
 max-step-size
 1
 100
-6.0
+2.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+13
+221
+185
+254
+diffusion-rate
+diffusion-rate
+0
+99
+51.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+11
+272
+183
+305
+evaporation-rate
+evaporation-rate
+0
+100
+10.0
 1
 1
 NIL
