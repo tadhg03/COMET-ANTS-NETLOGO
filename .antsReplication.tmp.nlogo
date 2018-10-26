@@ -129,15 +129,29 @@ to go-home
 end
 
 to follow-nest-scent
+  let scent-ahead nest-scent-at-angle   0
+  let scent-right nest-scent-at-angle  45
+  let scent-left  nest-scent-at-angle -45
+  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
+  [ ifelse scent-right > scent-left
+    [ right 45 ]
+    [ left 45 ] ]
+end
+
+to-report nest-scent-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [nest-scent] of p
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-647
-448
+715
+516
 -1
 -1
-13.0
+7.0
 1
 10
 1
@@ -147,10 +161,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--16
-16
--16
-16
+-35
+35
+-35
+35
 0
 0
 1
@@ -199,8 +213,8 @@ SLIDER
 population
 population
 1
-100
-51.0
+200
+100.0
 1
 1
 NIL
@@ -263,7 +277,7 @@ diffusion-rate
 diffusion-rate
 0
 99
-50.0
+99.0
 1
 1
 NIL
