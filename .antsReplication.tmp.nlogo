@@ -56,28 +56,79 @@ to recolor-patch
 end
 
 
-
-;; everything below this line hasn't been changed from the first ve
 to go
   if not any? patches with [pcolor = blue][stop]
   ask turtles
   [
+
+    ifelse color = green
+    [find-food]
+    [go-home]
+
     ifelse coin-flip? [right random max-turn-angle] [left random max-turn-angle]
     forward random max-step-size
-
-    if pcolor = blue
-    [
-      set pcolor black
-      set food-eaten (food-eaten + 1)
-      set label food-eaten
-    ]
   ]
+
+  diffuse chemical (diffusion-rate / 100)
+
+  ask patches
+  [ set chemical chemical * (100 - evaporation-rate) / 100
+    recolor-patch ]
+
+    ;;not sure if we need this will keep here tho incase
+    ;;if pcolor = blue
+    ;;[
+      ;;set pcolor black
+      ;;set food-eaten (food-eaten + 1)
+      ;;set label food-eaten
+    ;;]
+
   tick
 end
 
 to-report coin-flip?
   report random 2 = 0
 end
+
+to find-food
+  if food > 0
+  [ set color blue + 1
+    set food food - 1
+    right 180
+    stop ]
+  if(chemical >= 0.05) and (chemical < 2)
+  [ follow-food-scent]
+end
+
+to follow-food-scent
+  let scent-ahead chemical-scent-at-angle   0
+  let scent-right chemical-scent-at-angle  45
+  let scent-left  chemical-scent-at-angle -45
+  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
+  [ ifelse scent-right > scent-left
+    [ right 45 ]
+    [ left 45 ] ]
+end
+
+to-report chemical-scent-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [report 0]
+  report [chemical] of p
+end
+
+to go-home
+  ifelse nest?
+  [
+    set color green
+    right 180
+  ]
+  [
+    set chemical chemical + 60
+    follow-nest-scent
+  ]
+end
+
+to follow-nest-scent
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -156,10 +207,10 @@ NIL
 HORIZONTAL
 
 PLOT
-4
-234
-204
-384
+3
+436
+203
+586
 Total Food Eaten
 Time
 Total Food Eaten
@@ -182,7 +233,7 @@ max-turn-angle
 max-turn-angle
 0
 180
-2.0
+91.0
 1
 1
 NIL
@@ -198,6 +249,36 @@ max-step-size
 1
 100
 6.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+13
+221
+185
+254
+diffusion-rate
+diffusion-rate
+0
+99
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+11
+272
+183
+305
+evaporation-rate
+evaporation-rate
+0
+100
+51.0
 1
 1
 NIL
