@@ -66,6 +66,7 @@ to go
     [go-home]
 
     ifelse coin-flip? [right random max-turn-angle] [left random max-turn-angle]
+    if
     forward random max-step-size
   ]
 
@@ -214,7 +215,7 @@ population
 population
 1
 200
-100.0
+125.0
 1
 1
 NIL
@@ -247,7 +248,7 @@ max-turn-angle
 max-turn-angle
 0
 180
-91.0
+41.0
 1
 1
 NIL
@@ -277,7 +278,7 @@ diffusion-rate
 diffusion-rate
 0
 99
-99.0
+51.0
 1
 1
 NIL
@@ -292,7 +293,7 @@ evaporation-rate
 evaporation-rate
 0
 100
-51.0
+10.0
 1
 1
 NIL
