@@ -9,8 +9,7 @@ to setup
     set shape "turtle"
     set size 3
     set color green
-    set food-eaten 0
-    ;test
+    set food-eaten 0\
   ]
   grow-food
 end
