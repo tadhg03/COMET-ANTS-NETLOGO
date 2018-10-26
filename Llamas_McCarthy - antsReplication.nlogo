@@ -3,11 +3,11 @@ turtles-own [food-eaten]
 
 ;attributes of food patches (current code: 1 food patch)
 patches-own [
-  chemical ;; amount of chemical on patch
-  food ;; amount of food on patch
-  nest? ;; boolean value: true if nest (where turtles initially spawn)
+  chemical
+  food
+  nest?
   nest-scent
-  food-source-number ;; ID value: food patch ID
+  food-source-number
 ]
 
 ;setting up turtles and food patches
@@ -76,7 +76,7 @@ to go
   [ set chemical chemical * (100 - evaporation-rate) / 100
     recolor-patch ]
 
-    ;;not sure if we need this will keep here tho incase
+    ;;Original code
     ;;if pcolor = blue
     ;;[
       ;;set pcolor black
